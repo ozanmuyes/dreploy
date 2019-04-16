@@ -1,0 +1,32 @@
+{
+  "name": "dreploy",
+  "version": "1.0.0-alpha",
+  "description": "Continuously deploy your project to server via SCP",
+  "main": "index.js",
+  "bin": {
+    "dreploy": "bin/dreploy"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "deploy",
+    "scp",
+    "continuous"
+  ],
+  "author": "Ozan Müyesseroğlu <ozanmuyes@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "bluebird": "^3.5.4",
+    "chalk": "^2.4.2",
+    "globby": "^9.2.0",
+    "ssh2": "^0.8.2",
+    "yargs": "^13.2.2"
+  },
+  "devDependencies": {
+    "babel-eslint": "^10.0.1",
+    "eslint": "^5.16.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.17.1"
+  }
+}

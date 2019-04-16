@@ -1,0 +1,15 @@
+#!/usr/bin/env node
+
+'use strict';
+
+// eslint-disable-next-line no-unused-expressions
+require('yargs')
+  .command(require('./commands/init'))
+  .command(require('./commands/deploy'))
+  .count('verbose')
+  .alias('v', 'verbose')
+  .alias('V', 'version')
+  .help('h')
+  .alias('h', 'help')
+  .epilog('Visit https://github.com/dreploy#usage-examples to see usage examples.')
+  .argv;
