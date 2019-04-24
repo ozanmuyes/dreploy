@@ -65,9 +65,9 @@ function handler(argv) {
   //
   if (fs.existsSync(DEPLOY_TARGET_FILEPATH)) {
     if (argv.force) {
-      logger.warn('Be warned; overwriting existing deploy target file.');
+      logger.warn(`Be warned; overwriting existing deploy target file ('${CONFIG_FILENAME}').`);
     } else {
-      logger.error("Deploy target file already exists for this project. Use '--force' flag to overwrite it. Existing file left intact.");
+      logger.error(`Deploy target file ('${CONFIG_FILENAME}') already exists for this project. Use '--force' flag to overwrite it. Existing file left intact.`);
       process.exitCode = 1;
       return;
     }
@@ -78,7 +78,8 @@ function handler(argv) {
   if (argv.yes) {
     fs.writeFileSync(DEPLOY_TARGET_FILEPATH, `${JSON.stringify(DEFAULT_TARGET_FILE, null, 2)}\n`);
 
-    logger.info('Deploy target file created.');
+    logger.info(`Deploy target file ('${CONFIG_FILENAME}') created.`);
+    logger.warn(`Do NOT forget to add '${CONFIG_FILENAME}' to '.gitignore' file!`);
     process.exitCode = 0;
     return;
   }

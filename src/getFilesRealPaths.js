@@ -1,24 +1,8 @@
-#!/usr/bin/env node
-
 'use strict';
-
-// NOTE TR Glob işlemleri
 
 const globby = require('globby');
 
-
-// NOTE This comes from `getProjectInfo()`
-const projectInfoFromFn = {
-  lang: 'nodejs',
-  root: 'D:/Code/tmp/dreploy-test-dirs/nodejs',
-};
-
-// NOTE This comes from `.dreployrc.json/local/files`
-const filesFromProjectConfig = [
-  'src\\*',
-  'package-lock.json',
-];
-
+const normalizePath = require('./utils/normalizePath');
 
 /**
  * Normalize the list of local files to be easily consumed by another internal function.
@@ -30,9 +14,11 @@ const filesFromProjectConfig = [
  * @param {ProjectInfo} projectInfo Project information object.
  * @returns {Array<string>} Normalized filepaths.
  */
-function normalizeLocalFiles(files, projectInfo) {
+function getFilesRealPaths(files, projectInfo) {
   return new Promise(async (resolve) => {
-    const preprocessedList = files.map(f => f.split('\\').join('/'));
+    // TODO Check if `files` is an array of strings
+
+    const preprocessedList = files.map(f => normalizePath(f, false));
 
     const resolveds = await globby(preprocessedList, {
       absolute: true,
@@ -46,12 +32,4 @@ function normalizeLocalFiles(files, projectInfo) {
   });
 }
 
-
-(async () => {
-  const normalizedFiles = await normalizeLocalFiles(filesFromProjectConfig, projectInfoFromFn);
-
-  console.log(normalizedFiles.join('\n'));
-})();
-
-
-/** @type {import('../typings/dreploy').ProjectInfo} ProjectInfo */
+module.exports = getFilesRealPaths;
