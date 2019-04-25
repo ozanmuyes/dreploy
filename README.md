@@ -1,6 +1,6 @@
 # Dreploy
 
-Continuously deploy project to server via SCP.
+Continuously deploy project to server via SFTP.
 
 ## Installation
 

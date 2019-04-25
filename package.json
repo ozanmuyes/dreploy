@@ -1,7 +1,7 @@
 {
   "name": "dreploy",
   "version": "1.0.0-alpha",
-  "description": "Continuously deploy your project to server via SCP",
+  "description": "Continuously deploy your project to server via SFTP.",
   "main": "index.js",
   "bin": {
     "dreploy": "bin/dreploy"
