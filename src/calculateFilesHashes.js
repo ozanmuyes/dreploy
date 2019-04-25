@@ -15,6 +15,9 @@ try {
 
 const bluebird = require('bluebird');
 
+// TODO Change hash algorithm here - this is hard-coded as of now
+const CRYPTO_HASH_ALGORITHM = 'sha1';
+
 /** @param {Array<string>} filepaths Array of absolute filepath(s) */
 async function calculateFilesHashes(filepaths) {
   return bluebird.map(filepaths, f => calculateFileHash(f), { concurrency: 3 })/* .then((hashes) => {
@@ -27,7 +30,7 @@ async function calculateFilesHashes(filepaths) {
 
 async function calculateFileHash(filepath) {
   return new Promise((resolve, reject) => {
-    const hash = crypto.createHash('sha1');
+    const hash = crypto.createHash(CRYPTO_HASH_ALGORITHM);
     const input = fs.createReadStream(filepath);
 
     hash.on('error', (error) => {

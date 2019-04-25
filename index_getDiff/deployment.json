@@ -1,0 +1,21 @@
+{
+  "hashAlgorithm": "sha1",
+  "files": [
+    {
+      "path": "/home/vagrant/dreploy-apps/nodejs/src/index.js",
+      "hash": "b5158d2387ffe0bd22252e7f5f853e1731afb33c"
+    },
+    {
+      "path": "/home/vagrant/dreploy-apps/nodejs/src/some-module/index.js",
+      "hash": "9da39a3ee5e6b4b0d3255bfef95601890afd8070"
+    },
+    {
+      "path": "/home/vagrant/dreploy-apps/nodejs/package.json",
+      "hash": "363e3a7798e1d5c59bbba96d5b0877ccc035688e"
+    },
+    {
+      "path": "/home/vagrant/dreploy-apps/nodejs/src/to-be-deleted.js",
+      "hash": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+    }
+  ]
+}

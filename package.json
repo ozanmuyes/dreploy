@@ -12,11 +12,13 @@
   "keywords": [
     "deploy",
     "scp",
+    "sftp",
     "continuous"
   ],
   "author": "Ozan Müyesseroğlu <ozanmuyes@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "async": "^2.6.2",
     "bluebird": "^3.5.4",
     "chalk": "^2.4.2",
     "globby": "^9.2.0",

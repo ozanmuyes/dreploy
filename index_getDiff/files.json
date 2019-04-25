@@ -1,0 +1,30 @@
+[
+  {
+    "localPath": "D:/Code/tmp/dreploy-test-dirs/nodejs/src/index.js",
+    "localHash": "b5158d2387ffe0bd22252e7f5f853e1731afb33c",
+    "remotePath": "/home/vagrant/dreploy-apps/nodejs/src/index.js",
+
+    "COMMENT": "same"
+  },
+  {
+    "localPath": "D:/Code/tmp/dreploy-test-dirs/nodejs/src/some-module/index.js",
+    "localHash": "da39a3ee5e6b4b0d3255bfef95601890afd80709",
+    "remotePath": "/home/vagrant/dreploy-apps/nodejs/src/some-module/index.js",
+
+    "COMMENT": "changed"
+  },
+  {
+    "localPath": "D:/Code/tmp/dreploy-test-dirs/nodejs/src/some-module/helpers/foo.js",
+    "localHash": "da39a3ee5e6b4b0d3255bfef95601890afd80709",
+    "remotePath": "/home/vagrant/dreploy-apps/nodejs/src/some-module/helpers/foo.js",
+
+    "COMMENT": "added"
+  },
+  {
+    "localPath": "D:/Code/tmp/dreploy-test-dirs/nodejs/package.json",
+    "localHash": "363e3a7798e1d5c59bbba96d5b0877ccc035688e",
+    "remotePath": "/home/vagrant/dreploy-apps/nodejs/package.json",
+
+    "COMMENT": "same"
+  }
+]
