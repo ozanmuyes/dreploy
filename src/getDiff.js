@@ -10,6 +10,7 @@
 function getDiff(newFiles, deploymentFiles) {
   const deployeds = deploymentFiles.slice();
 
+  /** @type {Diff} */
   const diff = {
     added: [],
     changed: [],
@@ -46,7 +47,7 @@ function getDiff(newFiles, deploymentFiles) {
     diff.deleted.push(...deployeds.slice().map(d => ({
       localPath: null,
       localHash: null,
-      remotePath: d.hash,
+      remotePath: d.path,
     })));
   }
 
@@ -56,23 +57,6 @@ function getDiff(newFiles, deploymentFiles) {
 module.exports = getDiff;
 
 
-/**
- * @typedef {object} FileToBeDeployed
- * @property {string} localPath
- * @property {string} localHash
- * @property {string} remotePath
- */
-
-/**
- * @typedef {object} DeployedFile
- * @property {string} path
- * @property {string} hash
- */
-
-/**
- * @typedef {object} Diff
- * @property {Array<FileToBeDeployed>} added
- * @property {Array<FileToBeDeployed>} changed
- * @property {Array<FileToBeDeployed>} deleted
- * @property {Array<FileToBeDeployed>} same
- */
+/** @typedef {import('../typings/dreploy').FileToBeDeployed} FileToBeDeployed */
+/** @typedef {import('../typings/dreploy').Diff} Diff */
+/** @typedef {import('../typings/dreploy').DeployedFile} DeployedFile */

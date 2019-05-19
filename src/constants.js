@@ -8,7 +8,7 @@ const CONSTANTS = {
   // From https://stackoverflow.com/a/26227660/250453
   USER_DATA_DIR: (process.env.APPDATA || (process.platform === 'darwin' ? `${process.env.HOME}Library/Preferences` : `${process.env.HOME}/.local/share`)),
   DEFAULT_GLOBAL_CONFIG: Object.freeze({
-    logLevel: 4,
+    logLevel: 3,
     maxUpLevelToProjectRoot: 0,
     // TODO
   }),

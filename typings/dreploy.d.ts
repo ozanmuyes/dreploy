@@ -21,10 +21,27 @@ export class Logger {
   debug(message: string): void;
 }
 
+
+export class FileToBeDeployed {
+  localPath: string;
+  localHash: string;
+  remotePath: string;
+}
+
+export class Diff {
+  added: FileToBeDeployed[];
+  changed: FileToBeDeployed[];
+  deleted: FileToBeDeployed[];
+  same: FileToBeDeployed[];
+}
+
+export class DeployedFile {
+  path: string;
+  hash: string;
+}
+
+
 global {
   declare var logger: Logger;
   // declare type ProjectInfo = ProjectInfo;
 }
-
-
-//

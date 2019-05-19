@@ -109,6 +109,7 @@ async function handler(argv) {
 
   // Finish processing project local files
   //
+  /** @type {Array<FileToBeDeployed>} */
   const files = [];
   for (let i = 0; i < projectLocalFilesRealPaths.length; i += 1) {
     files.push({
@@ -122,12 +123,12 @@ async function handler(argv) {
   // Get differences
   //
   // Check if 'deployment.json' exists
-  const OLD_DEPLOYMENT_FILE = path.join(projectInfo.root, DEPLOYMENT_FILENAME);
+  const DEPLOYMENT_FILE = path.join(projectInfo.root, DEPLOYMENT_FILENAME);
   let deploymentFile;
-  if (fs.existsSync(OLD_DEPLOYMENT_FILE)) {
+  if (fs.existsSync(DEPLOYMENT_FILE)) {
     // re-deploying
     // eslint-disable-next-line global-require, import/no-dynamic-require
-    deploymentFile = require(OLD_DEPLOYMENT_FILE);
+    deploymentFile = require(DEPLOYMENT_FILE);
   } else {
     // deploying for the first-time
     deploymentFile = [];
@@ -136,22 +137,39 @@ async function handler(argv) {
   // Finally calculate diff
   const diff = getDiff(files, deploymentFile.files || []);
 
+  if (diff.added.length + diff.changed.length + diff.deleted.length === 0) {
+    logger.info('No any change has been made since the last deploy. Exiting.');
+    return;
+  }
+
   if (Boolean(argv.dryRun) === true) {
     // TODO write preDeployLocalHook and preDeployRemoteHook
 
 
-    let buffer;
+    const buffer = [];
 
     // Print added files list
     //
     if (diff.added.length > 0) {
-      buffer = ['Files to be created on remote;'];
+      buffer.push('Files to be created on remote;');
       diff.added.forEach(f => buffer.push(`  * ${f.remotePath}`));
-      logger.info(buffer.join('\n'));
     }
 
-    // TODO print changed files list
-    // TODO print deleted files list
+    // Print changed files list
+    //
+    if (diff.changed.length > 0) {
+      buffer.push('Files to be changed on remote;');
+      diff.changed.forEach(f => buffer.push(`  * ${f.remotePath}`));
+    }
+
+    // Print deleted files list
+    //
+    if (diff.deleted.length > 0) {
+      buffer.push('Files to be deleted on remote;');
+      diff.deleted.forEach(f => buffer.push(`  * ${f.remotePath}`));
+    }
+
+    logger.info(buffer.join('\n'));
 
 
     // TODO write postDeployLocalHook and postDeployRemoteHook
@@ -199,14 +217,30 @@ async function handler(argv) {
 
       processAddedFiles(diff.added, sftp)
         .then(() => processChangedFiles(diff.changed, sftp))
-        // TODO .then(() => processDeletedFiles(diff.deleted, sftp))
+        .then(() => processDeletedFiles(diff.deleted, conn))
         .then(() => {
           // file transfer has done
-          // TODO write 'deployment.json'
+
+          logger.info('Deployed successfully.');
+
+          // Write 'deployment.json'
+          fs.writeFileSync(DEPLOYMENT_FILE, JSON.stringify({
+            hashAlgorithm: 'sha1', // FIXME Get real value - do NOT hard-code
+            files: [
+              // old ones
+              ...diff.same.map(f => ({ path: f.remotePath, hash: f.localHash })),
+              // new ones
+              ...diff.added.map(f => ({ path: f.remotePath, hash: f.localHash })),
+              ...diff.changed.map(f => ({ path: f.remotePath, hash: f.localHash })),
+              // NOTE NO `diff.deleted`
+            ],
+          }, null, 2));
+
           // TODO invoke postDeployLocalHook and postDeployRemoteHook
-          // TODO close connections (sftp and ssh)
-          //
-          debugger;
+
+          // Close connections (sftp and ssh)
+          sftp.end();
+          conn.end();
         })
         .catch((processError) => {
           //
@@ -215,6 +249,10 @@ async function handler(argv) {
         });
     });
   });
+
+  if (connConfig.privateKey && typeof connConfig.privateKey === 'string' && connConfig.privateKey[0] !== '-') {
+    connConfig.privateKey = fs.readFileSync(connConfig.privateKey);
+  }
 
   conn.connect(connConfig);
 
@@ -240,7 +278,7 @@ function getRemotePathFromLocalAbsPath(filepath, projectInfo, projectConfig) {
 
 /**
  * @param {Array<FileToBeDeployed>} addedFiles Added files
- * @param {import('ssh2').SFTPWrapper} sftp SFTP connection object.
+ * @param {SFTPWrapper} sftp SFTP connection object.
  * @return {Promise}
  */
 function processAddedFiles(addedFiles, sftp) {
@@ -271,7 +309,7 @@ function processAddedFiles(addedFiles, sftp) {
 
 /**
  * @param {Array<FileToBeDeployed>} changedFiles Changed files
- * @param {import('ssh2').SFTPWrapper} sftp SFTP connection object.
+ * @param {SFTPWrapper} sftp SFTP connection object.
  * @return {Promise}
  */
 function processChangedFiles(changedFiles, sftp) {
@@ -300,7 +338,45 @@ function processChangedFiles(changedFiles, sftp) {
   }));
 }
 
-// TODO processDeletedFiles
+/**
+ * @param {Array<FileToBeDeployed>} deletedFiles Deleted files
+ * @param {Client} ssh SSH connection object.
+ * @return {Promise}
+ */
+function processDeletedFiles(deletedFiles, ssh) {
+  return bluebird.each(deletedFiles, df /* deleted file */ => new Promise((resolve, reject) => {
+    ssh.exec(`rm ${df.remotePath}`, (err, stream) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+
+      stream.on('close', (code) => {
+        resolve();
+        // if (code !== 0) {
+        //   // TODO Remove wasn't performed on the server - do something about it
+        // }
+      }).on('data', (data) => {
+        resolve();
+      }).stderr.on('data', (data) => {
+        // NOTE For now neglect command failures - the file didn't deleted, may well be because doesn't exist
+        stream.close();
+
+        resolve();
+      });
+    });
+  })).then(() => {
+    const dirs = new Set();
+
+    deletedFiles.forEach((df) => {
+      dirs.add(path.dirname(df.remotePath));
+    });
+
+    // while (dirs.)
+
+    // TODO Check each entry in the `dirs` to see if the dir is empty - if so rm the dir
+  });
+}
 
 function mkdir(dir, cb, sftp, attrs = undefined) {
   let _dir = dir;
@@ -369,3 +445,8 @@ module.exports = {
   },
   handler,
 };
+
+
+/** @typedef {import('ssh2').SFTPWrapper} SFTPWrapper */
+/** @typedef {import('ssh2').Client} Client */
+/** @typedef {import('../../typings/dreploy').FileToBeDeployed} FileToBeDeployed */

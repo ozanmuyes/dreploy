@@ -1,6 +1,6 @@
 # Dreploy
 
-Continuously deploy project to server via SFTP.
+Continuously deploy projects to server via SFTP.
 
 ## Installation
 
@@ -18,17 +18,22 @@ Let's say you want to deploy a new project;
     $ cd prj
     ```
 
-2. Write some code
+2. Create a `package.json` file
+    ```bash
+    $ npm init -y
+    ```
+
+3. Write some code
     ```bash
     $ echo "console.log('hello world');" > index.js
     ```
 
-3. Initialize the deploy target for the project
+4. Initialize the deploy target for the project
     ```bash
     $ dreploy init -y
     ```
 
-4. Open newly created `.dreployrc.json` and edit to suit your needs (see [Configuration](#configuration) section for details)
+5. Open newly created `.dreployrc.json` and edit to suit your needs (see [Configuration](#configuration) section for details). Do not forget to add `"index.js"` to `local.files` array in the deploy target file.
     * On *nix
       ```bash
       $ $EDITOR .dreployrc.json
@@ -39,7 +44,7 @@ Let's say you want to deploy a new project;
       > notepad .dreployrc.json
       ```
 
-5. Deploy the project
+6. Deploy the project
     ```bash
     $ dreploy
     ```
@@ -49,38 +54,7 @@ Let's say you want to deploy a new project;
 <details>
   <summary>Deploy a new project (for the first-time)</summary>
 
-  > This use-case is from [Usage](#usage) section.
-
-  1. Create a project to be deployed
-      ```bash
-      $ mkdir prj
-      $ cd prj
-      ```
-
-  2. Write some code
-      ```bash
-      $ echo "console.log('hello world');" > index.js
-      ```
-
-  3. Initialize the deploy target for the project
-      ```bash
-      $ dreploy init -y
-      ```
-  4. Open newly created `.dreployrc.json` and edit to suit your needs (see [Configuration](#configuration) section for details)
-      * On *nix
-        ```bash
-        $ $EDITOR .dreployrc.json
-        ```
-
-      * On Windows
-        ```bash
-        > notepad .dreployrc.json
-        ```
-
-  5. Deploy the project
-      ```bash
-      $ dreploy
-      ```
+  > See [Usage](#usage) section for this use-case.
 </details>
 
 ## Configuration
@@ -95,7 +69,7 @@ bla bla
 
 ## Development
 
-* To identify more project languages create a JavaScript file under the `src/projectLangIdentifiers` directory. Currently to identify a Node.js (JavaScript) project we have a JavaScript file at [`src/projectLangIdentifiers/nodejs.js`](https://github.com/dreploy/blob/master/src/projectLangIdentifiers/nodejs.js) which looks for the `package.json` file in given [`Dirent`](https://nodejs.org/api/fs.html#fs_class_fs_dirent) array. The `package.json` file is what we seek for due to every Node.js project must have one.
+* To identify more project languages create a JavaScript file under the `src/projectLangIdentifiers` directory. Currently to identify a Node.js (JavaScript) project we have a JavaScript file at [`src/projectLangIdentifiers/nodejs.js`](https://github.com/ozanmuyes/dreploy/blob/master/src/projectLangIdentifiers/nodejs.js) which looks for the `package.json` file in given [`Dirent`](https://nodejs.org/api/fs.html#fs_class_fs_dirent) array. The `package.json` file is what we seek for due to every Node.js project must have one.
 
 
 ## Remarks
